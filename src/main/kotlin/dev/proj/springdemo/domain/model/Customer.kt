@@ -1,4 +1,4 @@
-package dev.proj.springdemo.model
+package dev.proj.springdemo.domain.model
 
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
