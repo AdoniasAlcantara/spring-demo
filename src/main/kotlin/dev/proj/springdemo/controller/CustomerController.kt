@@ -4,6 +4,9 @@ import dev.proj.springdemo.domain.model.Customer
 import dev.proj.springdemo.domain.repository.CustomerRepository
 import dev.proj.springdemo.request.CustomerRequest
 import dev.proj.springdemo.request.map
+import dev.proj.springdemo.util.noContent
+import dev.proj.springdemo.util.notFound
+import dev.proj.springdemo.util.ok
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
@@ -21,8 +24,8 @@ class CustomerController(private val repository: CustomerRepository) {
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: Long) = repository.findByIdOrNull(id)
-            ?.let { ResponseEntity.ok(it) }
-            ?: ResponseEntity.notFound().build()
+            ?.let(::ok)
+            ?: notFound()
 
     @PostMapping
     @ResponseStatus(CREATED)
@@ -31,23 +34,23 @@ class CustomerController(private val repository: CustomerRepository) {
     @PutMapping("/{id}")
     fun update(@PathVariable id: Long, @Valid @RequestBody request: CustomerRequest): ResponseEntity<Customer> {
         if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build()
+            return notFound()
         }
 
         val customer = with(request.map(id)) {
             repository.save(this)
         }
 
-        return ResponseEntity.ok(customer)
+        return ok(customer)
     }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long): ResponseEntity<Nothing> {
         if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build()
+            return notFound()
         }
 
         repository.deleteById(id)
-        return ResponseEntity.noContent().build()
+        return noContent()
     }
 }
