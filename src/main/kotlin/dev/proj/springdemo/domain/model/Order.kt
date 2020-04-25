@@ -1,7 +1,7 @@
 package dev.proj.springdemo.domain.model
 
 import java.math.BigDecimal
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import javax.persistence.*
 import javax.persistence.EnumType.STRING
 import javax.persistence.GenerationType.IDENTITY
@@ -16,8 +16,8 @@ data class Order(
 
         @Enumerated(STRING)
         val status: Status,
-        val start: LocalDateTime,
-        val end: LocalDateTime?,
+        val start: OffsetDateTime,
+        val end: OffsetDateTime?,
 
         @ManyToOne
         @JoinColumn(name = "customerId")
