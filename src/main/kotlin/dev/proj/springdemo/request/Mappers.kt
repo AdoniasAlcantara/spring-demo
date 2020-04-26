@@ -1,5 +1,6 @@
 package dev.proj.springdemo.request
 
+import dev.proj.springdemo.domain.model.Comment
 import dev.proj.springdemo.domain.model.Customer
 import dev.proj.springdemo.domain.model.Order
 import dev.proj.springdemo.domain.model.Order.Status.PENDING
@@ -14,5 +15,8 @@ fun OrderRequest.model(customer: Customer) = Order(
         PENDING,
         OffsetDateTime.now(),
         null,
-        customer
+        customer,
+        emptyList()
 )
+
+fun CommentRequest.model(order: Order) = Comment(0, description, OffsetDateTime.now(), order)

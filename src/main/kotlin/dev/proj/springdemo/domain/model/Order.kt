@@ -21,7 +21,10 @@ data class Order(
 
         @ManyToOne
         @JoinColumn(name = "customerId")
-        val customer: Customer
+        val customer: Customer,
+
+        @OneToMany(mappedBy = "order")
+        val comments: List<Comment>
 ) {
     enum class Status {
         PENDING, COMPLETED, CANCELED
