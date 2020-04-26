@@ -15,12 +15,7 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(ResourceNotFoundException::class)
     fun handleResourceNotFound(ex: ResourceNotFoundException, request: WebRequest): ResponseEntity<Any> {
-        val errorResponse = ErrorResponse(
-                status = ex.status.value(),
-                title = ex.message
-        )
-
-        return handleExceptionInternal(ex, errorResponse, HttpHeaders(), ex.status, request)
+        return handleApiException(ex, request)
     }
 
     @ExceptionHandler(DuplicateResourceException::class)
@@ -40,6 +35,11 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
         )
 
         return handleExceptionInternal(ex, errorResponse, HttpHeaders(), ex.status, request)
+    }
+
+    @ExceptionHandler(InvalidOperationException::class)
+    fun handleInvalidOperation(ex: InvalidOperationException, request: WebRequest): ResponseEntity<Any> {
+        return handleApiException(ex, request)
     }
 
     override fun handleMethodArgumentNotValid(
@@ -64,5 +64,14 @@ class ApiExceptionHandler : ResponseEntityExceptionHandler() {
         )
 
         return handleExceptionInternal(ex, errorResponse, headers, status, request)
+    }
+
+    fun handleApiException(ex: ApiException, request: WebRequest): ResponseEntity<Any> {
+        val errorResponse = ErrorResponse(
+                status = ex.status.value(),
+                title = ex.message
+        )
+
+        return handleExceptionInternal(ex, errorResponse, HttpHeaders(), ex.status, request)
     }
 }

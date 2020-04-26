@@ -1,5 +1,6 @@
 package dev.proj.springdemo.domain.model
 
+import dev.proj.springdemo.error.InvalidOperationException
 import java.math.BigDecimal
 import java.time.OffsetDateTime
 import javax.persistence.*
@@ -32,7 +33,7 @@ data class Order(
 
     private fun makeWithStatus(status: Status): Order {
         if (this.status != Status.PENDING) {
-            throw IllegalStateException("Not allowed to change order status to $status")
+            throw InvalidOperationException("Not allowed to change order status to $status")
         }
 
         return copy(status = status, end = OffsetDateTime.now())
