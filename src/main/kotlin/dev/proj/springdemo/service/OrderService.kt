@@ -1,5 +1,6 @@
 package dev.proj.springdemo.service
 
+import dev.proj.springdemo.domain.model.Comment
 import dev.proj.springdemo.domain.model.Order
 import dev.proj.springdemo.domain.repository.CommentRepository
 import dev.proj.springdemo.domain.repository.CustomerRepository
@@ -21,15 +22,11 @@ class OrderService(
         private val customerRepository: CustomerRepository,
         private val commentRepository: CommentRepository
 ) {
-
-    @Transactional(readOnly = true)
     fun getAll() = orderRepository.findAll().map(Order::response)
 
-    fun getById(id: Long) = orderRepository.findByIdOrNull(id)
-            ?.response()
-            ?: throw ResourceNotFoundException("Could not find order with id $id")
+    fun getById(id: Long) = getOrderById(id).response()
 
-    fun add(request: OrderRequest): OrderResponse {
+    fun submit(request: OrderRequest): OrderResponse {
         val customer = customerRepository.findByIdOrNull(request.customerId)
                 ?: throw ResourceNotFoundException("Customer with id ${request.customerId} does not exist")
 
@@ -37,11 +34,28 @@ class OrderService(
         return orderRepository.save(order).response()
     }
 
-    fun addComment(orderId: Long, request: CommentRequest): CommentResponse {
-        val order = orderRepository.findByIdOrNull(orderId)
-                ?: throw ResourceNotFoundException("Order with id $orderId does not exist")
+    fun complete(id: Long) {
+        val completed = getOrderById(id).makeCompleted()
+        orderRepository.save(completed)
+    }
 
+    fun cancel(id: Long) {
+        val canceled = getOrderById(id).makeCanceled()
+        orderRepository.save(canceled)
+    }
+
+    fun addComment(orderId: Long, request: CommentRequest): CommentResponse {
+        val order = getOrderById(orderId)
         val comment = request.model(order)
         return commentRepository.save(comment).response()
     }
+
+    @Transactional(readOnly = true)
+    fun getComments(orderId: Long): List<CommentResponse> {
+        val order = getOrderById(orderId)
+        return order.comments.map(Comment::response)
+    }
+
+    private fun getOrderById(id: Long) = orderRepository.findByIdOrNull(id)
+            ?: throw ResourceNotFoundException("Could not find order with id $id")
 }

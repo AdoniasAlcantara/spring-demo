@@ -10,8 +10,7 @@ fun Order.response() = OrderResponse(
         status.name,
         start,
         end,
-        CustomerResponse(customer.id, customer.name),
-        comments.map { it.response() }
+        CustomerResponse(customer.id, customer.name)
 )
 
 fun Comment.response() = CommentResponse(id, description, sendAt)

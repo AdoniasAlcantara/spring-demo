@@ -26,6 +26,18 @@ data class Order(
         @OneToMany(mappedBy = "order")
         val comments: List<Comment>
 ) {
+    fun makeCompleted() = makeWithStatus(Status.COMPLETED)
+
+    fun makeCanceled() = makeWithStatus(Status.CANCELED)
+
+    private fun makeWithStatus(status: Status): Order {
+        if (this.status != Status.PENDING) {
+            throw IllegalStateException("Not allowed to change order status to $status")
+        }
+
+        return copy(status = status, end = OffsetDateTime.now())
+    }
+
     enum class Status {
         PENDING, COMPLETED, CANCELED
     }

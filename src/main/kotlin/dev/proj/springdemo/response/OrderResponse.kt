@@ -10,6 +10,5 @@ data class OrderResponse(
         val status: String,
         val start: OffsetDateTime,
         val end: OffsetDateTime?,
-        val customer: CustomerResponse,
-        val comments: List<CommentResponse>
+        val customer: CustomerResponse
 )
